@@ -2,16 +2,13 @@ package spaceInvader;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
+
 import javafx.stage.Stage;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class SpaceInvaderApplication extends Application {
 
@@ -21,16 +18,21 @@ public class SpaceInvaderApplication extends Application {
 		screen.setPrefSize(640, 480);
 
 		Spaceship spaceship = new Spaceship(320, 240);
+		List<Asteroid> asteroids = new ArrayList<>();
+		while (asteroids.size() <= 5) {
+			Random rnd = new Random();
+			Asteroid asteroid = new Asteroid(rnd.nextInt(100), rnd.nextInt(100));
+			asteroids.add(asteroid);
+		}
 
-		screen.getChildren().add(spaceship.getShip());
+		screen.getChildren().add(spaceship.getSprite());
+		asteroids.forEach(asteroid -> screen.getChildren().add(asteroid.getSprite()));
 
 		Map<KeyCode, Boolean> keyPressed = new HashMap<>();
 
 		Scene scene = new Scene(screen);
 		scene.setOnKeyPressed(event -> keyPressed.put(event.getCode(), true));
 		scene.setOnKeyReleased(event -> keyPressed.put(event.getCode(), false));
-
-		Point2D movement = new Point2D(1, 0);
 
 		new AnimationTimer() {
 			@Override
@@ -48,6 +50,14 @@ public class SpaceInvaderApplication extends Application {
 				}
 
 				spaceship.move();
+
+				asteroids.forEach(asteroid -> asteroid.move());
+
+				asteroids.forEach(asteroid -> {
+					if (spaceship.crashed(asteroid)) {
+						stop();
+					}
+				});
 			}
 		}.start();
 
