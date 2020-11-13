@@ -2,6 +2,7 @@ package spaceInvader;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
@@ -19,12 +20,9 @@ public class SpaceInvaderApplication extends Application {
 		Pane screen = new Pane();
 		screen.setPrefSize(640, 480);
 
-		Polygon spaceship = new Polygon(-5, -5, 10, 0, -5, 5);
-		spaceship.setFill(Color.RED);
-		spaceship.setTranslateX(320);
-		spaceship.setTranslateY(240);
+		Spaceship spaceship = new Spaceship(320, 240);
 
-		screen.getChildren().add(spaceship);
+		screen.getChildren().add(spaceship.getShip());
 
 		Map<KeyCode, Boolean> keyPressed = new HashMap<>();
 
@@ -32,16 +30,24 @@ public class SpaceInvaderApplication extends Application {
 		scene.setOnKeyPressed(event -> keyPressed.put(event.getCode(), true));
 		scene.setOnKeyReleased(event -> keyPressed.put(event.getCode(), false));
 
+		Point2D movement = new Point2D(1, 0);
+
 		new AnimationTimer() {
 			@Override
-			public void handle(long present) {
+			public void handle(long now) {
 				if (keyPressed.getOrDefault(KeyCode.LEFT, false)) {
-					spaceship.setRotate(spaceship.getRotate() - 5);
+					spaceship.turnLeft();
 				}
 
 				if (keyPressed.getOrDefault(KeyCode.RIGHT, false)) {
-					spaceship.setRotate(spaceship.getRotate() + 5);
+					spaceship.turnRight();
 				}
+
+				if (keyPressed.getOrDefault(KeyCode.UP, false)) {
+					spaceship.accelerate();
+				}
+
+				spaceship.move();
 			}
 		}.start();
 
