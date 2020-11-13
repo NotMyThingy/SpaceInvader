@@ -12,16 +12,19 @@ import java.util.*;
 
 public class SpaceInvaderApplication extends Application {
 
+	public final static int WIDTH = 640;
+	public final static int HEIGHT = 480;
+
 	@Override
 	public void start(Stage stage) throws Exception {
 		Pane screen = new Pane();
-		screen.setPrefSize(640, 480);
+		screen.setPrefSize(WIDTH, HEIGHT);
 
-		Spaceship spaceship = new Spaceship(320, 240);
+		Spaceship spaceship = new Spaceship(WIDTH / 2, HEIGHT / 2);
 		List<Asteroid> asteroids = new ArrayList<>();
 		while (asteroids.size() <= 5) {
 			Random rnd = new Random();
-			Asteroid asteroid = new Asteroid(rnd.nextInt(100), rnd.nextInt(100));
+			Asteroid asteroid = new Asteroid(rnd.nextInt(WIDTH / 3), rnd.nextInt(HEIGHT));
 			asteroids.add(asteroid);
 		}
 

@@ -32,6 +32,22 @@ public abstract class Sprite {
 	public void move() {
 		sprite.setTranslateX(sprite.getTranslateX() + movement.getX());
 		sprite.setTranslateY(sprite.getTranslateY() + movement.getY());
+
+		if (sprite.getTranslateX() < 0) {
+			sprite.setTranslateX(sprite.getTranslateX() + SpaceInvaderApplication.WIDTH);
+		}
+
+		if (sprite.getTranslateX() > SpaceInvaderApplication.WIDTH) {
+			sprite.setTranslateX(sprite.getTranslateX() % SpaceInvaderApplication.WIDTH);
+		}
+
+		if (sprite.getTranslateY() < 0) {
+			sprite.setTranslateY(sprite.getTranslateY() + SpaceInvaderApplication.HEIGHT);
+		}
+
+		if (sprite.getTranslateY() > SpaceInvaderApplication.HEIGHT) {
+			sprite.setTranslateY(sprite.getTranslateY() % SpaceInvaderApplication.HEIGHT);
+		}
 	}
 
 	public void accelerate() {
