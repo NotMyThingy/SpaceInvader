@@ -16,7 +16,7 @@ public class SpaceInvaderApplication extends Application {
 	public final static int HEIGHT = 480;
 
 	@Override
-	public void start(Stage stage) throws Exception {
+	public void start(Stage stage) {
 		Pane screen = new Pane();
 		screen.setPrefSize(WIDTH, HEIGHT);
 
@@ -54,7 +54,7 @@ public class SpaceInvaderApplication extends Application {
 
 				spaceship.move();
 
-				asteroids.forEach(asteroid -> asteroid.move());
+				asteroids.forEach(Asteroid::move);
 
 				asteroids.forEach(asteroid -> {
 					if (spaceship.crashed(asteroid)) {

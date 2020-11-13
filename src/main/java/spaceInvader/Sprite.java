@@ -33,19 +33,19 @@ public abstract class Sprite {
 		sprite.setTranslateX(sprite.getTranslateX() + movement.getX());
 		sprite.setTranslateY(sprite.getTranslateY() + movement.getY());
 
-		if (sprite.getTranslateX() < 0) {
+		if (sprite.getBoundsInParent().getMinX() < 0) {
 			sprite.setTranslateX(sprite.getTranslateX() + SpaceInvaderApplication.WIDTH);
 		}
 
-		if (sprite.getTranslateX() > SpaceInvaderApplication.WIDTH) {
+		if (sprite.getBoundsInParent().getMaxX() > SpaceInvaderApplication.WIDTH) {
 			sprite.setTranslateX(sprite.getTranslateX() % SpaceInvaderApplication.WIDTH);
 		}
 
-		if (sprite.getTranslateY() < 0) {
+		if (sprite.getBoundsInParent().getMinY() < 0) {
 			sprite.setTranslateY(sprite.getTranslateY() + SpaceInvaderApplication.HEIGHT);
 		}
 
-		if (sprite.getTranslateY() > SpaceInvaderApplication.HEIGHT) {
+		if (sprite.getBoundsInParent().getMaxY() > SpaceInvaderApplication.HEIGHT) {
 			sprite.setTranslateY(sprite.getTranslateY() % SpaceInvaderApplication.HEIGHT);
 		}
 	}

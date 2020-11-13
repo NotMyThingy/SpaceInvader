@@ -1,12 +1,10 @@
 package spaceInvader;
 
-import javafx.scene.shape.Polygon;
-
 import java.util.Random;
 
 public class Asteroid extends Sprite {
 
-	private double rotation;
+	private final double rotation;
 
 	public Asteroid(int x, int y) {
 		super(new AsteroidFactory().createNewAsteroid(), x, y);
