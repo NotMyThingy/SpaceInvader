@@ -2,6 +2,7 @@ package spaceInvader;
 
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Shape;
 
 public abstract class Sprite {
 
@@ -35,8 +36,13 @@ public abstract class Sprite {
 
 	public void accelerate() {
 		double accelX = Math.cos(Math.toRadians(sprite.getRotate())) * 0.05;
-		double accelY = Math.cos(Math.toRadians(sprite.getRotate())) * 0.05;
+		double accelY = Math.sin(Math.toRadians(sprite.getRotate())) * 0.05;
 
 		movement = movement.add(accelX, accelY);
+	}
+
+	public boolean crashed(Sprite other) {
+		Shape crashZone = Shape.intersect(this.sprite, other.getSprite());
+		return crashZone.getBoundsInLocal().getWidth() != -1;
 	}
 }
