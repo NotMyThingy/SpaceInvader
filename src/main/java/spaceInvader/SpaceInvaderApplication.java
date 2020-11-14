@@ -6,9 +6,11 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SpaceInvaderApplication extends Application {
 
@@ -55,7 +57,7 @@ public class SpaceInvaderApplication extends Application {
 					spaceship.accelerate();
 				}
 
-				if (keyPressed.getOrDefault(KeyCode.SPACE, false) && ammunition.size() < 5) {
+				if (keyPressed.getOrDefault(KeyCode.SPACE, false)) {
 					Ammo ammo = new Ammo(
 							(int) spaceship.getSprite().getTranslateX(),
 							(int) spaceship.getSprite().getTranslateY());
@@ -81,6 +83,33 @@ public class SpaceInvaderApplication extends Application {
 					}
 				});
 
+				ammunition.forEach(ammo -> {
+					asteroids.forEach(asteroid -> {
+						if (ammo.crashed(asteroid)) {
+							ammo.setAlive(false);
+							asteroid.setAlive(false);
+						}
+					});
+				});
+
+				ammunition.stream()
+						.filter(ammo -> !ammo.isAlive())
+						.forEach(ammo -> screen.getChildren().remove(ammo.getSprite()));
+				ammunition.removeAll(ammunition.stream()
+						.filter(ammo -> !ammo.isAlive())
+						.collect(Collectors.toList()));
+
+				asteroids.stream()
+						.filter(asteroid -> !asteroid.isAlive())
+						.forEach(asteroid -> screen.getChildren().remove(asteroid.getSprite()));
+				asteroids.removeAll(asteroids.stream()
+						.filter(asteroid -> !asteroid.isAlive())
+						.collect(Collectors.toList()));
+
+				if (asteroids.size() == 0) {
+					screen.getChildren().clear();
+					stop();
+				}
 			}
 		}.start();
 

@@ -8,11 +8,13 @@ public abstract class Sprite {
 
 	private final Polygon sprite;
 	private Point2D movement;
+	private boolean isAlive;
 
 	public Sprite(Polygon sprite, int x, int y) {
 		this.sprite = sprite;
 		this.sprite.setTranslateX(x);
 		this.sprite.setTranslateY(y);
+		isAlive = true;
 
 		movement = new Point2D(0, 0);
 	}
@@ -27,6 +29,14 @@ public abstract class Sprite {
 
 	public void setMovement(Point2D movement) {
 		this.movement = movement;
+	}
+
+	public boolean isAlive() {
+		return isAlive;
+	}
+
+	public void setAlive(boolean alive) {
+		isAlive = alive;
 	}
 
 	public void turnLeft() {
@@ -69,4 +79,5 @@ public abstract class Sprite {
 		Shape crashZone = Shape.intersect(this.sprite, other.getSprite());
 		return crashZone.getBoundsInLocal().getWidth() != -1;
 	}
+
 }
