@@ -21,7 +21,10 @@ public class SpaceInvaderApplication extends Application {
 		screen.setPrefSize(WIDTH, HEIGHT);
 
 		Spaceship spaceship = new Spaceship(WIDTH / 2, HEIGHT / 2);
+
+		List<Ammo> ammunition = new ArrayList<>();
 		List<Asteroid> asteroids = new ArrayList<>();
+
 		while (asteroids.size() <= 5) {
 			Random rnd = new Random();
 			Asteroid asteroid = new Asteroid(rnd.nextInt(WIDTH / 3), rnd.nextInt(HEIGHT));
@@ -52,15 +55,32 @@ public class SpaceInvaderApplication extends Application {
 					spaceship.accelerate();
 				}
 
-				spaceship.move();
+				if (keyPressed.getOrDefault(KeyCode.SPACE, false) && ammunition.size() < 5) {
+					Ammo ammo = new Ammo(
+							(int) spaceship.getSprite().getTranslateX(),
+							(int) spaceship.getSprite().getTranslateY());
+					ammo.getSprite()
+							.setRotate(spaceship
+									.getSprite()
+									.getRotate());
+					ammo.accelerate();
+					ammo.setMovement(ammo.getMovement().normalize().multiply(3));
 
+					ammunition.add(ammo);
+
+					screen.getChildren().add(ammo.getSprite());
+				}
+
+				spaceship.move();
 				asteroids.forEach(Asteroid::move);
+				ammunition.forEach(Ammo::move);
 
 				asteroids.forEach(asteroid -> {
 					if (spaceship.crashed(asteroid)) {
 						stop();
 					}
 				});
+
 			}
 		}.start();
 

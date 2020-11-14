@@ -21,6 +21,14 @@ public abstract class Sprite {
 		return sprite;
 	}
 
+	public Point2D getMovement() {
+		return movement;
+	}
+
+	public void setMovement(Point2D movement) {
+		this.movement = movement;
+	}
+
 	public void turnLeft() {
 		sprite.setRotate(sprite.getRotate() - 5);
 	}
