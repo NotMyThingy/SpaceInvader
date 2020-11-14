@@ -5,11 +5,11 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
-
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class SpaceInvaderApplication extends Application {
@@ -17,14 +17,21 @@ public class SpaceInvaderApplication extends Application {
 	public final static int WIDTH = 640;
 	public final static int HEIGHT = 480;
 
+	private AtomicInteger score;
+
 	@Override
 	public void start(Stage stage) {
 		Pane screen = new Pane();
 		screen.setPrefSize(WIDTH, HEIGHT);
 
+		score = new AtomicInteger();
+
+		Text status = new Text(10, 20, "Points: 0");
+		screen.getChildren().add(status);
+
 		Spaceship spaceship = new Spaceship(WIDTH / 2, HEIGHT / 2);
 
-		List<Ammo> ammunition = new ArrayList<>();
+		List<Bullet> ammunition = new ArrayList<>();
 		List<Asteroid> asteroids = new ArrayList<>();
 
 		while (asteroids.size() <= 5) {
@@ -58,57 +65,61 @@ public class SpaceInvaderApplication extends Application {
 				}
 
 				if (keyPressed.getOrDefault(KeyCode.SPACE, false)) {
-					Ammo ammo = new Ammo(
+					Bullet bullet = new Bullet(
 							(int) spaceship.getSprite().getTranslateX(),
 							(int) spaceship.getSprite().getTranslateY());
-					ammo.getSprite()
+					bullet.getSprite()
 							.setRotate(spaceship
 									.getSprite()
 									.getRotate());
-					ammo.accelerate();
-					ammo.setMovement(ammo.getMovement().normalize().multiply(3));
+					bullet.accelerate();
+					bullet.setVelocity(bullet.getVelocity().normalize().multiply(3));
 
-					ammunition.add(ammo);
+					ammunition.add(bullet);
 
-					screen.getChildren().add(ammo.getSprite());
+					screen.getChildren().add(bullet.getSprite());
 				}
 
 				spaceship.move();
 				asteroids.forEach(Asteroid::move);
-				ammunition.forEach(Ammo::move);
+				ammunition.forEach(Bullet::move);
 
 				asteroids.forEach(asteroid -> {
-					if (spaceship.crashed(asteroid)) {
+					if (spaceship.isColliding(asteroid)) {
 						stop();
 					}
 				});
 
-				ammunition.forEach(ammo -> {
+				ammunition.forEach(bullet -> {
 					asteroids.forEach(asteroid -> {
-						if (ammo.crashed(asteroid)) {
-							ammo.setAlive(false);
+						if (bullet.isColliding(asteroid)) {
+							bullet.setAlive(false);
 							asteroid.setAlive(false);
+							status.setText("Points: " + score.addAndGet(1000));
 						}
 					});
 				});
 
 				ammunition.stream()
-						.filter(ammo -> !ammo.isAlive())
-						.forEach(ammo -> screen.getChildren().remove(ammo.getSprite()));
+						.filter(Bullet::isDead)
+						.forEach(bullet -> screen.getChildren().remove(bullet.getSprite()));
 				ammunition.removeAll(ammunition.stream()
-						.filter(ammo -> !ammo.isAlive())
+						.filter(Bullet::isDead)
 						.collect(Collectors.toList()));
 
 				asteroids.stream()
-						.filter(asteroid -> !asteroid.isAlive())
+						.filter(Asteroid::isDead)
 						.forEach(asteroid -> screen.getChildren().remove(asteroid.getSprite()));
 				asteroids.removeAll(asteroids.stream()
-						.filter(asteroid -> !asteroid.isAlive())
+						.filter(Asteroid::isDead)
 						.collect(Collectors.toList()));
 
-				if (asteroids.size() == 0) {
-					screen.getChildren().clear();
-					stop();
+				if (Math.random() < 0.005) {
+					Asteroid asteroid = new Asteroid(WIDTH, HEIGHT);
+					if (!asteroid.isColliding(spaceship)) {
+						asteroids.add(asteroid);
+						screen.getChildren().add(asteroid.getSprite());
+					}
 				}
 			}
 		}.start();

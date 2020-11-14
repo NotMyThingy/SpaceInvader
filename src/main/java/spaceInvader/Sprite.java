@@ -7,7 +7,7 @@ import javafx.scene.shape.Shape;
 public abstract class Sprite {
 
 	private final Polygon sprite;
-	private Point2D movement;
+	private Point2D velocity;
 	private boolean isAlive;
 
 	public Sprite(Polygon sprite, int x, int y) {
@@ -16,23 +16,27 @@ public abstract class Sprite {
 		this.sprite.setTranslateY(y);
 		isAlive = true;
 
-		movement = new Point2D(0, 0);
+		velocity = new Point2D(0, 0);
 	}
 
 	public Polygon getSprite() {
 		return sprite;
 	}
 
-	public Point2D getMovement() {
-		return movement;
+	public Point2D getVelocity() {
+		return velocity;
 	}
 
-	public void setMovement(Point2D movement) {
-		this.movement = movement;
+	public void setVelocity(Point2D velocity) {
+		this.velocity = velocity;
 	}
 
 	public boolean isAlive() {
 		return isAlive;
+	}
+
+	public boolean isDead() {
+		return !isAlive;
 	}
 
 	public void setAlive(boolean alive) {
@@ -48,8 +52,8 @@ public abstract class Sprite {
 	}
 
 	public void move() {
-		sprite.setTranslateX(sprite.getTranslateX() + movement.getX());
-		sprite.setTranslateY(sprite.getTranslateY() + movement.getY());
+		sprite.setTranslateX(sprite.getTranslateX() + velocity.getX());
+		sprite.setTranslateY(sprite.getTranslateY() + velocity.getY());
 
 		if (sprite.getBoundsInParent().getMinX() < 0) {
 			sprite.setTranslateX(sprite.getTranslateX() + SpaceInvaderApplication.WIDTH);
@@ -72,10 +76,10 @@ public abstract class Sprite {
 		double accelX = Math.cos(Math.toRadians(sprite.getRotate())) * 0.05;
 		double accelY = Math.sin(Math.toRadians(sprite.getRotate())) * 0.05;
 
-		movement = movement.add(accelX, accelY);
+		velocity = velocity.add(accelX, accelY);
 	}
 
-	public boolean crashed(Sprite other) {
+	public boolean isColliding(Sprite other) {
 		Shape crashZone = Shape.intersect(this.sprite, other.getSprite());
 		return crashZone.getBoundsInLocal().getWidth() != -1;
 	}
